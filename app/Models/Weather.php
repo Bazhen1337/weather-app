@@ -3,57 +3,59 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Http;
 
 class Weather extends Model
 {
-    protected $apiKey;
+    protected $apiKey = 'fd4848476d2090a78d19d44bf13059b9';
+    //protected $geoUrl = 'http://api.openweathermap.org/geo/1.0/direct';
+    protected $weaterUrl = 'https://api.openweathermap.org/data/2.5/weather';
 
-    public function __construct()
-    {
-        $this->apiKey = config('services.openweather.key'); // FIXME: регнуться на сайте с апи и получить ключ
-    }
+    protected $iconUrl = 'https://openweathermap.org/img/wn/%s@%s.png';
 
-    public function getCurrentWeather(string $city): array
+    /*public function getCoordinates(string $city)
     {
-        $response = '{
-        "lat": 52.2297,
-  "lon": 21.0122,
-  "timezone": "Europe/Warsaw",
-  "timezone_offset": 3600,
-  "data": [
-    {
-        "dt": 1645888976,
-      "sunrise": 1645853361,
-      "sunset": 1645891727,
-      "temp": 279.13,
-      "feels_like": 276.44,
-      "pressure": 1029,
-      "humidity": 64,
-      "dew_point": 272.88,
-      "uvi": 0.06,
-      "clouds": 0,
-      "visibility": 10000,
-      "wind_speed": 3.6,
-      "wind_deg": 340,
-      "weather": [
-        {
-            "id": 800,
-          "main": "Clear",
-          "description": "clear sky",
-          "icon": "01d"
+        $response = Http::get($this->geoUrl, [
+            'q' => $city,
+            'limit' => 1,
+            'appid' => $this->apiKey
+        ]);
+
+        if ($response->successful()) {
+            //$data = $response->json();
+
+            if (!empty($response)) {
+                return $response;
+            }
         }
-      ]
+
+        return null;
+    }*/
+
+    public function getIcon(string $iconCode): string
+    {
+        return sprintf($this->iconUrl, $iconCode, '4x');
     }
-  ]
-}';
-/*        $response = Http::get("/", [
+
+    public function toFahrenheit(float $temp): float
+    {
+        return ($temp * 9 / 5 + 32);
+    }
+
+    public function getCurrentWeather(string $city, string $units = 'metric'): array
+    {
+        $weather_response = Http::get($this->weaterUrl, [
             'q' => $city,
             'appid' => $this->apiKey,
-            'units' => 'metric',
+            'units' => $units,
             'lang' => 'ru'
-        ]);*/
-        // FIXME: узнать о работе данного апи
-        //return $response->json();
-        return json_decode($response, true);
+        ]);
+        $far = $this->toFahrenheit($weather_response['main']['temp']);
+        $iconUrl = $this->getIcon($weather_response['weather'][0]['icon']);
+        return [
+            'weather_response' => $weather_response->json(),
+            'iconUrl' => $iconUrl,
+            'far' => $far
+        ];
     }
 }

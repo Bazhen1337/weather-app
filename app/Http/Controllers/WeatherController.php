@@ -7,7 +7,7 @@ use App\Models\Weather;
 
 class WeatherController extends Controller
 {
-    public function show(string $city = 'Москва')
+    public function show(string $city = 'Воронеж')
     {
         $weatherModel = new Weather();
         $weatherData = $weatherModel->getCurrentWeather($city);

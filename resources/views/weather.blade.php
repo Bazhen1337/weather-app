@@ -1,7 +1,6 @@
 <x-layout>
     <div class="weather-container">
         <h2>Погода в {{ $weather['weather_response']['name'] }}</h2>
-        @dd($weather)
         <div class="weather-info">
             <img src="{{ $weather['iconUrl'] }}"
                  alt="{{ $weather['weather_response']['weather'][0]['description'] }}"
@@ -16,10 +15,11 @@
 
             <div class="details">
                 <div>Влажность: {{ $weather['weather_response']['main']['humidity'] }}%</div>
-                <div>Ветер: {{ $weather['weather_response']['wind']['speed'] }} м/с</div>
+                <div>Ветер: {{ $weather['weather_response']['wind']['speed'] }} м/с, {{ $weather['direction'] }}</div>
                 <div>Давление: {{ $weather['weather_response']['main']['pressure'] }} гПа</div>
                 <div>Фаренгейт: {{ round($weather['far']) }} °F</div>
             </div>
         </div>
     </div>
+    @dd($weather)
 </x-layout>

@@ -13,15 +13,15 @@ class WeatherController extends Controller
         $weatherData = $weatherModel->getCurrentWeather($city);
 
         return view('weather', [
-            'weather' => $weatherData,
-            //'iconUrl' => $iconUrl
-//            'weatherIcon' => '',
-//            'temperature' => '',
-//            'description' => '',
-//            'wind' => '',
-//            'atmosphericPressure' => '',
-//            'humidity' => '',
-//            'rainChanse' => ''
+            'city' => $city,
+            'iconUrl' => $weatherData['iconUrl'],
+            'temperature' => $weatherData['weather_response']['main']['temp'],
+            'description' => $weatherData['weather_response']['weather'][0]['description'],
+            'wind' => $weatherData['weather_response']['wind']['speed'],
+            'windDirection' => $weatherData['direction'],
+            'pressure' => $weatherData['weather_response']['main']['pressure'],
+            'humidity' => $weatherData['weather_response']['main']['humidity'],
+            'pop' => $weatherData['weather_forecast_response']
         ]);
     }
 }
